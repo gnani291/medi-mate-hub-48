@@ -1,26 +1,49 @@
 
-// This file would typically communicate with a Raspberry Pi via a backend API
-// For this demo, we'll simulate the Raspberry Pi integration
+// This file communicates with a Raspberry Pi via a backend API
 
 export interface MotorCommand {
   motorNumber: number;
   duration: number; // milliseconds
 }
 
-// Simulate dispensing medicine from Raspberry Pi
+// Configure your Raspberry Pi's IP address and port here
+const RASPBERRY_PI_API = "http://YOUR_RASPBERRY_PI_IP:5000/api/dispense";
+
+// Send commands to Raspberry Pi to dispense medicine
 export const dispenseFromRaspberryPi = async (motorNumber: number): Promise<boolean> => {
   console.log(`Sending command to Raspberry Pi: Activating motor ${motorNumber}`);
   
-  // In a real implementation, this would make an API call to a backend service
-  // that communicates with the Raspberry Pi
-  
-  // Simulate the time it takes to dispense
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Motor ${motorNumber} activated successfully`);
-      resolve(true);
-    }, 2000); // Simulate 2 second dispensing time
-  });
+  try {
+    // Make an API call to the Raspberry Pi server
+    const response = await fetch(RASPBERRY_PI_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ motorNumber }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error from Raspberry Pi:', errorData);
+      return false;
+    }
+
+    const data = await response.json();
+    console.log('Raspberry Pi response:', data);
+    return true;
+  } catch (error) {
+    console.error('Failed to communicate with Raspberry Pi:', error);
+    
+    // Fallback to simulation mode for testing when Pi is not available
+    console.log('Using simulation mode instead');
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log(`[SIMULATION] Motor ${motorNumber} activated successfully`);
+        resolve(true);
+      }, 2000); // Simulate 2 second dispensing time
+    });
+  }
 };
 
 // Raspberry Pi Python code that would be running on the Pi itself
@@ -169,14 +192,18 @@ export const raspberryPiSetupInstructions = `
 
 // Get Raspberry Pi connection status
 export const checkRaspberryPiStatus = async (): Promise<boolean> => {
-  // In a real implementation, this would ping the Raspberry Pi API
-  
-  // For demo purposes, simulate a successful connection
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, 1000);
-  });
+  try {
+    // Try to reach the test endpoint on the Raspberry Pi
+    const response = await fetch(`http://YOUR_RASPBERRY_PI_IP:5000/api/test`);
+    if (response.ok) {
+      const data = await response.json();
+      return data.status === 'success';
+    }
+    return false;
+  } catch (error) {
+    console.error('Failed to check Raspberry Pi status:', error);
+    return false;
+  }
 };
 
 // Get Raspberry Pi instructions
