@@ -7,7 +7,7 @@ export interface MotorCommand {
 }
 
 // Configure your Raspberry Pi's IP address and port here
-const RASPBERRY_PI_API = "http://YOUR_RASPBERRY_PI_IP:5000/api/dispense";
+const RASPBERRY_PI_API = "192.168.15.66 2409:40f0:161:4162:3dfc:ee1d:bff9:17f0";
 
 // Send commands to Raspberry Pi to dispense medicine
 export const dispenseFromRaspberryPi = async (motorNumber: number): Promise<boolean> => {
@@ -194,7 +194,7 @@ export const raspberryPiSetupInstructions = `
 export const checkRaspberryPiStatus = async (): Promise<boolean> => {
   try {
     // Try to reach the test endpoint on the Raspberry Pi
-    const response = await fetch(`http://YOUR_RASPBERRY_PI_IP:5000/api/test`);
+    const response = await fetch(`192.168.15.66 2409:40f0:161:4162:3dfc:ee1d:bff9:17f0`);
     if (response.ok) {
       const data = await response.json();
       return data.status === 'success';
