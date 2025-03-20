@@ -50,8 +50,8 @@ const PatientLogin = () => {
       setShowVerification(true);
       
       toast({
-        title: "Verification code sent",
-        description: `We've sent a verification code to ${phoneNumber}`,
+        title: "Verifying your number",
+        description: `Please wait while we verify ${phoneNumber}`,
       });
     } catch (error) {
       console.error("Authentication error:", error);
