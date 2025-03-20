@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { dispenseFromRaspberryPi } from '@/lib/raspberryPi';
 import { saveMedicineDispensed } from '@/lib/db';
-import { Thermometer, Lung, Droplets, Pill } from 'lucide-react';
+import { Thermometer, Wind, Droplets, Pill } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 type MedicineType = 'fever' | 'cough' | 'cold' | 'stomachAche';
@@ -22,7 +21,7 @@ const getIcon = (type: MedicineType) => {
     case 'fever':
       return <Thermometer className="w-8 h-8" />;
     case 'cough':
-      return <Lung className="w-8 h-8" />;
+      return <Wind className="w-8 h-8" />;
     case 'cold':
       return <Droplets className="w-8 h-8" />;
     case 'stomachAche':

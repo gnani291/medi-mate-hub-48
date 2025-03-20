@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -11,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { checkRaspberryPiStatus, getRaspberryPiInstructions, getRaspberryPiCode } from '@/lib/raspberryPi';
 import { getMedicineInventory, updateMedicineCount, getUserStats } from '@/lib/db';
-import { LogOut, Users, Pill, Check, X, Thermometer, Lung, Droplets, ArrowDown } from 'lucide-react';
+import { LogOut, Users, Pill, Check, X, Thermometer, Wind, Droplets, ArrowDown } from 'lucide-react';
 
 interface Medicine {
   id: string;
@@ -32,21 +31,17 @@ const OwnerDashboard = () => {
   const [showInstructions, setShowInstructions] = useState(false);
   const [showCode, setShowCode] = useState(false);
 
-  // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         
-        // Fetch medicine inventory
         const inventory = await getMedicineInventory();
         setMedicines(inventory);
         
-        // Fetch user stats
         const userStats = await getUserStats();
         setStats(userStats);
         
-        // Check Raspberry Pi status
         const status = await checkRaspberryPiStatus();
         setPiStatus(status);
       } catch (error) {
@@ -64,12 +59,10 @@ const OwnerDashboard = () => {
     fetchData();
   }, [toast]);
   
-  // Handle medicine count update
   const handleUpdateCount = async (id: string, newCount: number) => {
     try {
       await updateMedicineCount(id, newCount);
       
-      // Update local state
       setMedicines(medicines.map(med => {
         if (med.id === id) {
           return { ...med, count: newCount, lastRefilled: new Date() };
@@ -91,23 +84,20 @@ const OwnerDashboard = () => {
     }
   };
   
-  // Handle logout
   const handleLogout = () => {
     navigate('/');
   };
   
-  // Get medicine type icon
   const getMedicineIcon = (type: string) => {
     switch (type) {
       case 'fever': return <Thermometer className="w-5 h-5" />;
-      case 'cough': return <Lung className="w-5 h-5" />;
+      case 'cough': return <Wind className="w-5 h-5" />;
       case 'cold': return <Droplets className="w-5 h-5" />;
       case 'stomachAche': return <Pill className="w-5 h-5" />;
       default: return <Pill className="w-5 h-5" />;
     }
   };
   
-  // Format medicine type label
   const formatMedicineType = (type: string) => {
     switch (type) {
       case 'fever': return 'Fever';
@@ -149,7 +139,6 @@ const OwnerDashboard = () => {
           </motion.div>
         </div>
         
-        {/* Stats Cards */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -211,7 +200,6 @@ const OwnerDashboard = () => {
           </Card>
         </motion.div>
         
-        {/* Tabs Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -360,7 +348,7 @@ const OwnerDashboard = () => {
                     <Button 
                       onClick={async () => {
                         try {
-                          setPiStatus(null); // Set to loading state
+                          setPiStatus(null);
                           const status = await checkRaspberryPiStatus();
                           setPiStatus(status);
                           
